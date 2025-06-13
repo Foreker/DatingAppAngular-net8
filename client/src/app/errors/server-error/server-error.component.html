@@ -1,0 +1,22 @@
+
+<div class="container text-center" style="margin-top: 100px;">
+    <h2 class="mb-4">Oops! Something went wrong.</h2>
+    <h1 class="display-4 text-danger">Internal Server Error</h1>
+</div>
+@if (error) {    
+    <p>What to do next?</p>
+    <ol>
+        <li>Check your internet connection.</li>
+        <li>Refresh the page.</li>
+        <li>If the problem persists, please contact support.</li>
+        <li>Provide the error details if possible.</li>
+    </ol>
+    <p class="font-weight-bold">Following is the stack trace - check the first 2 lines </p>
+    <code class="mt-5" style="color: red;">
+        {{error.details}}
+    </code>
+}
+<div class="mt-5 text-center" >
+    <p class="text-muted">If you are a developer, check the console for more details.</p>
+    <button class="btn btn-primary" routerLink="/">Go Back Home</button>
+</div>
