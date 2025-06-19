@@ -26,27 +26,29 @@ namespace API.Controllers
                 return BadRequest("Username is taken");
             }
 
+            return Ok();
+
             // Hash the password and save the user
-            using var hmac = new HMACSHA512();
+            // using var hmac = new HMACSHA512();
 
-            var user = new AppUser
-            {
-                UserName = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
-           
+            // var user = new AppUser
+            // {
+            //     UserName = registerDto.Username.ToLower(),
+            //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+            //     PasswordSalt = hmac.Key
+            // };
 
-            await _dataContext.Users.AddAsync(user);
-            await _dataContext.SaveChangesAsync();
 
-            _logger.LogInformation("User registered with id {Username}", user.UserName);
+            // await _dataContext.Users.AddAsync(user);
+            // await _dataContext.SaveChangesAsync();
 
-            return new UserDto
-            {
-                Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
-            };
+            // _logger.LogInformation("User registered with id {Username}", user.UserName);
+
+            // return new UserDto
+            // {
+            //     Username = user.UserName,
+            //     Token = _tokenService.CreateToken(user)
+            // };
         }
 
         [HttpPost("login")] // account/login

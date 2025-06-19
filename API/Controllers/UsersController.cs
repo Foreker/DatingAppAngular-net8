@@ -4,7 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
+using API.DTOs;
 using API.Entities;
+using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,29 +15,35 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers;
 
-public class UsersController(DataContext _dataContext, ILogger<UsersController> _logger) : BaseApiController
+public class UsersController(IUserRepository userRepository, ILogger<UsersController> _logger) : BaseApiController
 {
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
     {
-        var result = await _dataContext.Users.ToListAsync();
-        _logger.LogInformation("GetUsers called, returning {Count} users", result.Count);
-
-        return result;
-    }
-
-    [HttpGet("{id:int}")] // api/users/1
-    public async Task<ActionResult<AppUser>> GetUser(int id)
-    {
-        var user = await _dataContext.Users.FindAsync(id);
-        if (user == null)
+        var users = await userRepository.GetMembersAsync();
+        if (users == null || !users.Any())
         {
-        _logger.LogWarning("User with id {Id} not found", id);
-        return NotFound();
+            _logger.LogWarning("No users found");
+            return NotFound("No users found");
         }
 
-        _logger.LogInformation("GetUser called for id {Id}", id);
+        _logger.LogInformation("GetUsers called, returning {Count} users", users.Count());
+
+        return Ok(users);
+    }
+
+    [HttpGet("{username}")] // api/users/username
+    public async Task<ActionResult<MemberDto>> GetUser(string username)
+    {
+        var user = await userRepository.GetMemberAsync(username);
+        if (user == null)
+        {
+            _logger.LogWarning("User with username {UserName} not found", username);
+            return NotFound();
+        }
+
+        _logger.LogInformation("GetUser called for username {UserName}", username);
         return user;
     }
 
@@ -42,8 +51,8 @@ public class UsersController(DataContext _dataContext, ILogger<UsersController> 
     [HttpPost] // api/users
     public async Task<ActionResult<AppUser>> CreateUser(AppUser user)
     {
-        await _dataContext.Users.AddAsync(user);
-        await _dataContext.SaveChangesAsync();
+        await userRepository.AddUser(user);
+        await userRepository.SaveAllAsync();
 
         _logger.LogInformation("User created with id {Id}", user.Id);
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
@@ -58,27 +67,28 @@ public class UsersController(DataContext _dataContext, ILogger<UsersController> 
             return BadRequest();
         }
 
-        _dataContext.Entry(user).State = EntityState.Modified;
-        await _dataContext.SaveChangesAsync();
+        userRepository.UpdateUser(user);
+        await userRepository.SaveAllAsync();
 
         _logger.LogInformation("User with id {Id} updated", id);
         return NoContent();
     }
 
-    [HttpDelete("{id:int}")] // api/users/1
-    public async Task<IActionResult> DeleteUser(int id)
+    [HttpDelete("{username}")] // api/users/username
+    public async Task<IActionResult> DeleteUser(string username)
     {
-        var user = await _dataContext.Users.FindAsync(id);
+        var user = await userRepository.GetUserByUsernameAsync(username);
         if (user == null)
         {
-            _logger.LogWarning("User with id {Id} not found", id);
+            _logger.LogWarning("User with id {Id} not found", username);
             return NotFound();
         }
 
-        _dataContext.Users.Remove(user);
-        await _dataContext.SaveChangesAsync();
+        await userRepository.DeleteUser(user);
+        await userRepository.SaveAllAsync();
 
-        _logger.LogInformation("User with id {Id} deleted", id);
+        _logger.LogInformation("User with id {Id} deleted", username);
         return NoContent();
     }
+    
 }
