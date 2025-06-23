@@ -15,9 +15,9 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers;
 
+[Authorize]
 public class UsersController(IUserRepository userRepository, ILogger<UsersController> _logger) : BaseApiController
 {
-    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
     {
@@ -90,5 +90,5 @@ public class UsersController(IUserRepository userRepository, ILogger<UsersContro
         _logger.LogInformation("User with id {Id} deleted", username);
         return NoContent();
     }
-    
+
 }
