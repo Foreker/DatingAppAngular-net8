@@ -7,7 +7,7 @@ import { GalleryModule, GalleryItem, ImageItem } from 'ng-gallery';
 
 @Component({
   selector: 'app-member-detail',
-  imports: [TabsModule],
+  imports: [TabsModule, GalleryModule],
   templateUrl: './member-detail.component.html',
   styleUrl: './member-detail.component.css'
 })
@@ -29,6 +29,9 @@ export class MemberDetailComponent {
     this.memberService.getMember(username).subscribe({
       next: (member) => {
         this.member = member;
+        member.photos.map(p => {
+          this.images.push(new ImageItem({ src: p.url, thumb: p.url }));
+        });
         console.log('Member fetched successfully:', this.member);
       },
       error: (error) => {
