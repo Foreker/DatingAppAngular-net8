@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
@@ -16,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace API.Controllers;
 
 [Authorize]
-public class UsersController(IUserRepository userRepository, ILogger<UsersController> _logger) : BaseApiController
+public class UsersController(IUserRepository userRepository, IMapper mapper, ILogger<UsersController> _logger) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
@@ -58,20 +59,37 @@ public class UsersController(IUserRepository userRepository, ILogger<UsersContro
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
     }
 
-    [HttpPut("{id:int}")] // api/users/1
-    public async Task<IActionResult> UpdateUser(int id, AppUser user)
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
     {
-        if (id != user.Id)
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (username == null)
         {
-            _logger.LogWarning("User id mismatch: {Id} vs {UserId}", id, user.Id);
-            return BadRequest();
+            _logger.LogWarning("User not found for update");
+            return BadRequest("Not username found in token");
         }
 
-        userRepository.UpdateUser(user);
-        await userRepository.SaveAllAsync();
+        var user = await userRepository.GetUserByUsernameAsync(username);
+        if (user == null)
+        {
+            _logger.LogWarning("User with username {UserName} not found for update", username);
+            return BadRequest("User not found");
+        }
 
-        _logger.LogInformation("User with id {Id} updated", id);
-        return NoContent();
+        mapper.Map(memberUpdateDto, user);
+        userRepository.UpdateUser(user);
+
+        if (await userRepository.SaveAllAsync())
+        {
+            _logger.LogInformation("User with username {UserName} updated successfully", username);
+            return NoContent();
+        }
+        else
+        {
+            _logger.LogError("Failed to update user with username {UserName}", username);
+            return BadRequest("Failed to update user");
+        }
     }
 
     [HttpDelete("{username}")] // api/users/username
@@ -90,5 +108,4 @@ public class UsersController(IUserRepository userRepository, ILogger<UsersContro
         _logger.LogInformation("User with id {Id} deleted", username);
         return NoContent();
     }
-
 }
