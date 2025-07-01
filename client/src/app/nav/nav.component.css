@@ -2,3 +2,11 @@
     cursor: pointer;
     color: var(--text-color);
 }
+
+img {
+    width: 50px;
+    max-height: 50px;
+    border: 2px solid white;
+    display: inline-block;
+    object-fit: cover;
+}

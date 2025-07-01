@@ -4,7 +4,7 @@
         <div class="card">
             <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}"
                 class="card-img img-thumbnail">
-            <div class="car-body">
+            <div class="car-body" style="margin-left: 15px;">
                 <div>
                     <strong>Location:</strong>
                     <p>{{member.city}}, {{member.country}}</p>
@@ -45,7 +45,12 @@
             </tab>
              <tab heading="Photos" #photoTab="tab">
                 @if (photoTab.active) {
-                    <gallery [items]="images" thumbPosition="left" class="gallery"></gallery>
+                    <gallery 
+                        [items]="images" 
+                        [itemAutosize]="true"
+                        thumbPosition="left" 
+                        class="gallery">
+                    </gallery>
                 }
             </tab>
              <tab heading="Messages">

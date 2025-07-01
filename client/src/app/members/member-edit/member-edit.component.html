@@ -15,7 +15,7 @@
         <div class="card">
             <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}"
                 class="card-img img-thumbnail">
-            <div class="car-body">
+            <div class="card-body" style="margin-left: 15px;">
                 <div>
                     <strong>Location:</strong>
                     <p>{{member.city}}, {{member.country}}</p>
@@ -64,7 +64,10 @@
 
             </tab>
             <tab heading="Edit photos">
-                <h4>Photos</h4>
+                <app-photo-editor 
+                    [member]="member"
+                    (memberChange)="onMemberChange($event)">
+                </app-photo-editor>
             </tab>
         </tabset>
     </div>

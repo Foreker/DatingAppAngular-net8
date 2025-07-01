@@ -21,6 +21,10 @@
 
         @if (accountService.currentUser()) {
             <div dropdown class="dropdown">
+                <img 
+                    class="rounded-circle me-2" 
+                    src="{{ accountService.currentUser()?.photoUrl || '/default-profile.jpg' }}"
+                    alt="user main photo" >
                 <a dropdownToggle class="dropdown-toogle text-light text-decoration-none">
                     Welcome back {{accountService.currentUser()?.username | titlecase}}
                 </a>
