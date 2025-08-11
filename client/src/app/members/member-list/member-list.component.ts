@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MembersService } from '../../services/members.service';
-import { Member } from '../../models/member';
-import { MembersCardComponent } from '../members-card/members-card.component';
+import { MembersCardComponent } from '../member-card/members-card.component';
 
 @Component({
   selector: 'app-member-list',

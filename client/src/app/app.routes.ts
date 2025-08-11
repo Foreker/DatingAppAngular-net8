@@ -10,6 +10,10 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { preventUnsavedChangesGuard } from './guards/prevent-unsaved-changes.guard';
+import { MemberProfileComponent } from './members/member-profile/member-profile.component';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
+import { MemberPhotosComponent } from './members/member-photos/member-photos.component';
+import { memberResolverResolver } from './members/member-resolver.resolver';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent }, 
@@ -19,7 +23,19 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             {path: 'members', component: MemberListComponent},
-            {path: 'members/:username', component: MemberDetailComponent },
+            {
+                path: 'members/:username', 
+                resolve: {member: memberResolverResolver},
+                runGuardsAndResolvers: 'always',
+                component: MemberDetailComponent,
+                children: [
+                    {path: '', redirectTo: 'profile', pathMatch: 'full'},
+                    {path: 'profile', component: MemberProfileComponent, title: 'Profile', 
+                        canActivate: [preventUnsavedChangesGuard]},
+                    {path: 'photos', component: MemberPhotosComponent, title: 'Photos'},
+                    {path: 'messages', component: MemberMessagesComponent, title: 'Messages'},
+                ] 
+            },
             {path: 'member/edit', component: MemberEditComponent, canDeactivate: [preventUnsavedChangesGuard]},
             {path: 'lists', component: ListsComponent }, 
             {path: 'messages', component: MessagesComponent }, 

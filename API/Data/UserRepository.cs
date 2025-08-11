@@ -37,9 +37,9 @@ namespace API.Data
 
         public async Task<IEnumerable<MemberDto>> GetMembersAsync()
         {
-                return await context.Users
-                    .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
-                    .ToListAsync();
+            return await context.Users
+                .ProjectTo<MemberDto>(mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
         public async Task<MemberDto?> GetMemberAsync(string username)
@@ -77,6 +77,23 @@ namespace API.Data
             return Task.CompletedTask; // No need to await here, as SaveChangesAsync will be called later
         }
 
-        
+        public async Task<IEnumerable<PhotoDto>> GetUserPhotosAsync(string username)
+        {
+            var photos = await context.Users
+                .Where(u => u.UserName.Equals(username))
+                .SelectMany(u => u.Photos)
+                .ProjectTo<PhotoDto>(mapper.ConfigurationProvider)
+                .Select(photo => new PhotoDto
+                {
+                    Id = photo.Id,
+                    Url = photo.Url,
+                    IsMain = photo.IsMain,
+                    Username = username // Add the username property to PhotoDto
+                })
+                .ToListAsync();
+
+
+            return photos ?? throw new InvalidOperationException($"No photos found for user {username}.");
+        }
     }
 }

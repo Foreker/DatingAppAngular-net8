@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Helpers;
 using API.Interfaces;
 using CloudinaryDotNet;
@@ -12,17 +13,17 @@ namespace API.Services
 {
     public class PhotoService : IPhotoService
     {
-        private readonly CloudinaryDotNet.Cloudinary _cloudinary;
+        private readonly Cloudinary _cloudinary;
 
         public PhotoService(IOptions<CloudinarySettings> config)
         {
-            var acc = new CloudinaryDotNet.Account(
+            var acc = new Account(
                 config.Value.CloudName,
                 config.Value.ApiKey,
                 config.Value.ApiSecret
             );
 
-            _cloudinary = new CloudinaryDotNet.Cloudinary(acc);
+            _cloudinary = new Cloudinary(acc);
         }
         public async Task<ImageUploadResult> UploadPhotoAsync(IFormFile file)
         {
@@ -43,7 +44,7 @@ namespace API.Services
                     {
                         uploadResult = await _cloudinary.UploadAsync(uploadParams);
                     }
-                    catch (System.Exception)
+                    catch (Exception)
                     {
                         // Handle exceptions as needed, e.g., log the error
                         throw new Exception("An error occurred while uploading the photo.");

@@ -1,54 +1,94 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary"> 
-    <div class="container"> 
-        <a class="navbar-brand" routerLink="/" routerLinkActive="active">Dating APP</a> 
+<header class="p-3 w-full fixed top-0 z-50 bg-gradient-to-r from-primary to-black text-light"> 
+    <div class="flex align-middle items-center px-10 mx-auto gap-6"> 
+        <a class="flex items-center gap-3 max-h-16 text-white border-r-white border-r-2 pr-6" 
+            routerLink="/" 
+            routerLinkActive="text-accent"
+            [routerLinkActiveOptions] = "{exact: true}"> 
+            <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16"
+                width="30" height="30" stroke="currentColor" stroke-width="1.5">
+                <path  stroke-linecap="round" stroke-linejoin="round"
+                     d="M8 2.748-.717-1.646C-1.717 1.646-1.717 5.354 0 7.354l8 8 8-8c1.717-2 1.717-5.708-.717-9.002L8 2.748z"/>
+            </svg>
+            <h3 class="text-2xl font-semibold text-white uppercase">Dating App</h3> 
+        </a> 
        
-        <ul class="navbar-nav me-auto mb-2 mb-md-0"> 
+        <nav class="flex gap-3 my-2 uppercase text-lg text-white"> 
             @if (accountService.currentUser()) {
-                <li class="nav-item"> 
-                    <a routerLink="/members" routerLinkActive="active" class="nav-link">Matches</a> 
-                </li> 
-                <li class="nav-item"> 
-                    <a routerLink="/lists" routerLinkActive="active" class="nav-link">Lists</a> 
-                </li> 
-                <li class="nav-item"> 
-                    <a routerLink="/messages" routerLinkActive="active" class="nav-link">Messages</a> 
-                </li> 
+                <a class="nav-item"> 
+                    <a routerLink="/members" routerLinkActive="text-accent" 
+                        [routerLinkActiveOptions] = "{exact: true}"
+                        class="nav-link">
+                        Matches
+                    </a> 
+                </a> 
+                <a class="nav-item"> 
+                    <a routerLink="/lists" routerLinkActive="text-accent" class="nav-link">Lists</a> 
+                </a> 
+                <a class="nav-item"> 
+                    <a routerLink="/messages" routerLinkActive="text-accent" class="nav-link">Messages</a> 
+                </a> 
             }
-            <li class="nav-item"> 
-                <a routerLink="/errors" routerLinkActive="active" class="nav-link">Errors</a>
-            </li>
-        </ul> 
+            <a class="nav-item"> 
+                <a routerLink="/errors" routerLinkActive="text-accent" class="nav-link">Errors</a>
+            </a>
+        </nav> 
 
-        @if (accountService.currentUser()) {
-            <div dropdown class="dropdown">
-                <img 
-                    class="rounded-circle me-2" 
-                    src="{{ accountService.currentUser()?.photoUrl || '/default-profile.jpg' }}"
-                    alt="user main photo" >
-                <a dropdownToggle class="dropdown-toogle text-light text-decoration-none">
-                    Welcome back {{accountService.currentUser()?.username | titlecase}}
-                </a>
-                <div class="dropdown-menu" *dropdownMenu>
-                    <a routerLink="/member/edit" class="dropdown-item">Edit profile</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="" class="dropdown-item" (click)="logout()">Logout</a>
+        <!-- @if (busyService.busyRequestsCount() > 0) {
+            <span class="loading loading-spinner loading-lg text-primary"></span>
+        } -->
+
+        <div class="flex align-middle ml-auto gap-3">
+
+        <div class="dropdown mr-5 dropdown-end">
+            <button tabindex="1" class="flex flex-col justify-center align-middle 
+                text-white cursor-pointer uppercase text-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6 flex self-center">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42" />
+                </svg>
+                <span>{{selectedTheme()}}</span>
+            </button>
+            <ul tabindex="1" class="dropdown-content z-50 menu bg-base-100 rounded-box w-52 p-2 shadow-sm">
+                @for (theme of themes; track $index) {
+                    <li (click)="handleSelectTheme(theme)">
+                        <a>{{theme}}</a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+            
+        @if (accountService.currentUser(); as user) {
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="flex items-center text-white text-xl gap-3 cursor-pointer">
+                    <img [src]="user?.photoUrl || '/default-profile.jpg'" alt="user avatar" class="w-10 h-10 rounded-full">
+                    <span>Welcome back {{user?.knownAs | titlecase}}</span>
                 </div>
+                <ul  tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                    <li><a routerLink="/members/{{user.username}}">Edit profile</a></li>
+                    <li><a (click)="logout()">Logout</a></li>
+                </ul>
+            </div>
+            
+        } @else {
+            <div class="flex align-middle ml-auto gap-3">
+                 <form  class="flex items-center gap-3" #loginForm="ngForm" (ngSubmit)="login()" role="search"> 
+                    <input name="Username" 
+                        [(ngModel)]="model.username" 
+                        type="text"
+                        class="input border-amber-50" 
+                        placeholder="Username"> 
+                    <input name="password" 
+                        [(ngModel)]="model.password" 
+                        type="text"
+                        class="input border-amber-50" 
+                        placeholder="Password" 
+                        type="password"> 
+                    <button class="btn btn-success" type="submit">Login</button> 
+                </form> 
             </div>
         }
-        
-        @if (!accountService.currentUser()) {
-            <form #loginForm="ngForm" (ngSubmit)="login()" class="d-flex" role="search"> 
-                <input name="Username" 
-                    [(ngModel)]="model.username" 
-                    class="form-control me-2" 
-                    placeholder="Username"> 
-                <input name="password" 
-                    [(ngModel)]="model.password" 
-                    class="form-control me-2" 
-                    placeholder="Password" 
-                    type="password"> 
-                <button class="btn btn-success" type="submit">Login</button> 
-            </form> 
-        }
+        </div>
     </div> 
-</nav>
+</header>

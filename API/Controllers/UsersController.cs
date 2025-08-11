@@ -102,6 +102,18 @@ public class UsersController(IUserRepository userRepository, IMapper mapper,
         return NoContent();
     }
 
+     [HttpGet("{username}/photos")]
+    public async Task<ActionResult<IReadOnlyList<PhotoDto>>> GetMemberPhotos(string username)
+    {
+        var user = await userRepository.GetUserByUsernameAsync(username);
+        if (user == null)
+        {
+            _logger.LogWarning("User with username {UserName} not found for adding photo", username);
+            return NotFound();
+        }
+        return Ok(await userRepository.GetUserPhotosAsync(username));
+    }
+
     [HttpPost("add-photo")]
     public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
     {

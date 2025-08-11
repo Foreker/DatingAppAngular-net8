@@ -1,4 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: all
+}
+
 .tab-panel {
   border: 1px solid #ddd;
   padding: 10px;

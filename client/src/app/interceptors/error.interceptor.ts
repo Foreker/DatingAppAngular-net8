@@ -1,12 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { catchError } from 'rxjs';
+import { ToastService } from '../services/toast.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
-  const toastr = inject(ToastrService);
+  const toastr = inject(ToastService);
 
   return next(req)
     .pipe(
@@ -37,7 +37,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             router.navigateByUrl('/server-error', navigationExtras);
             break;
           default:
-            toastr.error('An unexpected error occurred.', 'Error');
+            toastr.error('An unexpected error occurred.');
         }
         throw err;
       })

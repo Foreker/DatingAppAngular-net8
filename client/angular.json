@@ -5,7 +5,16 @@
   "projects": {
     "client": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:resolver": {
+          "skipTests": true,
+          "path": "src/app"
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true,
+          "path": "src/app/pipes"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -31,9 +40,7 @@
               }
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/font-awesome/css/font-awesome.min.css",
-              "node_modules/bootswatch/dist/sandstone/bootstrap.min.css",
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "node_modules/ngx-spinner/animations/square-jelly-box.css",
               "node_modules/ngx-toastr/toastr.css",
               "src/styles.css"

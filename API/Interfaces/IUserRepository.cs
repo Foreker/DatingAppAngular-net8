@@ -18,5 +18,6 @@ namespace API.Interfaces
         void UpdateUser(AppUser user);
         Task DeleteUser(AppUser user);
         Task<bool> SaveAllAsync();
+        Task<IEnumerable<PhotoDto>> GetUserPhotosAsync(string username);
     }
 }
